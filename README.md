@@ -9,4 +9,4 @@ start coverage/lcov-report/TestGeneration/<file_name>.js.html
 ```
 
 #### Screenshot
-[! alt text](./code_coverage.png)
+![screenshot](./code_coverage.png)
