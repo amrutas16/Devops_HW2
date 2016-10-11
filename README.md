@@ -5,7 +5,7 @@
 npm install
 node main.js <file_name>
 node_modules\.bin\istanbul cover test.js
-start coverage/lcov-report/TestGeneration/<file_name>.js.html
+start coverage/lcov-report/Devops_HW2/<file_name>.js.html
 ```
 
 #### Screenshot
