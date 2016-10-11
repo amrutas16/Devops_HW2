@@ -15,7 +15,7 @@ function main()
 
    if( args.length == 0 )
    {
-      args = ["mystery.js"];
+      args = ["subject.js"];
    }
    filePath = args[0];
 
@@ -90,11 +90,7 @@ function generateTestCases()
          var paramName = functionConstraints[funcName].params[i];
          params[paramName] = ['\'\''];
       }
-
-      if(funcName == 'blackListNumber')
-      {
-         console.log(functionConstraints[funcName].params);
-      }
+      
       // update parameter values based on known constraints.
       var constraints = functionConstraints[funcName].constraints;
       // Handle global constraints...
@@ -110,18 +106,7 @@ function generateTestCases()
          var constraint = constraints[c];
          if( params.hasOwnProperty( constraint.ident ) )
          {
-            // if(constraint.ident == 'dir' && constraint.kind == 'fileExists')
-            // {
-            //    params[constraint.ident].push(constraint.value);
-            // }
-            // else if(constraint.ident == 'filePath' && constraint.kind == 'fileWithContent')  
-            // {
-            //    params[constraint.ident].push(constraint.value);
-            // }
-            // else if(constraint.ident != 'dir' && constraint.ident != 'filePath')
-            // {
-               params[constraint.ident].push(constraint.value);
-            // }
+            params[constraint.ident].push(constraint.value);
          }
       }
 
@@ -137,6 +122,7 @@ function generateTestCases()
       {
          values = [[1,2,3,4,5,6,7,8,9], [1,2,3,4,5,6,7,8,9], [1,2,3,4,5,6,7,8,9]];
       }
+
       combinations = _.uniq(product(values));
       
       for(i in combinations)
@@ -253,7 +239,6 @@ function constraints(filePath)
                //indexOf
                if(child.left.type == 'CallExpression' &&  child.left.callee.type == 'MemberExpression' && child.left.callee.property.name == 'indexOf')
                {
-                  console.log("index of");
                   var str = '';
                   var index = child.right.value;
 
@@ -263,8 +248,7 @@ function constraints(filePath)
                   }
 
                   str = '"' + str + child.left.arguments[0].value + '"';
-                  console.log(str);
-
+                  
                   functionConstraints[funcName].constraints.push( 
                      new Constraint(
                      {
@@ -373,8 +357,6 @@ function constraints(filePath)
                {
                   if( child.arguments[0].name == params[p] )
                   {
-                     //if(params[p] == 'filePath')
-                     // console.log("param p", params[p]);
                      functionConstraints[funcName].constraints.push( 
                      new Constraint(
                      {
