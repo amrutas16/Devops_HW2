@@ -76,7 +76,6 @@ var mockFileLibrary =
 
 function generateTestCases()
 {
-   // var content = "var subject = require('./mystery.js')\nvar mock = require('mock-fs');\n";
    var content = "var subject = require('./" + filePath + "')\nvar mock = require('mock-fs');\n";
    for ( var funcName in functionConstraints )
    {
@@ -110,6 +109,17 @@ function generateTestCases()
          }
       }
 
+      if(phoneNumber)
+      {
+         var num = "'"+String(faker.phone.phoneNumber())+"'";
+         params['phoneNumber'].push(num);
+
+         if(options)
+         {
+            params['options'].push("'option'");
+         }
+      }
+
       var paramNames = Object.keys(params);
       var values = [];
 
@@ -118,31 +128,12 @@ function generateTestCases()
          values.push(listOfValues);
       })
 
-      if(phoneNumber)
-      {
-         values = [[1,2,3,4,5,6,7,8,9], [1,2,3,4,5,6,7,8,9], [1,2,3,4,5,6,7,8,9]];
-      }
-
       combinations = _.uniq(product(values));
       
       for(i in combinations)
       {
-         if(phoneNumber)
-         {
-            var num = "'" + combinations[i].toString().split(',').join('')  + "000000'";
-            combinations[i] = [num];
-            if(options)
-            {
-               combinations[i].push('\'\'');
-               combinations[i].push('\'option\'');
-            }
-         }
-         
-         if(combinations[i].length > 1)
-            var args = combinations[i].join(",");
-         else
-            var args = combinations[i][0];
-
+         var args = combinations[i].join(",");
+        
          if( pathExists || fileWithContent )
          {
             if(args != '\'\'\,\'\'')
@@ -261,6 +252,28 @@ function constraints(filePath)
                      })
                   );
                }
+
+               if( child.left.type == 'Identifier' && child.left.name)
+               {
+                  var expression = buf.substring(child.range[0], child.range[1]);
+                  var rightHand = buf.substring(child.right.range[0], child.right.range[1]).trim();
+                  var left = buf.substring(child.left.range[0], child.left.range[1]);
+                 
+                  if(left == 'area')
+                  {
+                     var num = "'" + rightHand.substring(1,4) + "000000'";
+                     functionConstraints[funcName].constraints.push( 
+                     new Constraint(
+                     {
+                        ident: 'phoneNumber',
+                        value: num,
+                        funcName: funcName,
+                        kind: "string",
+                        operator : child.operator,
+                        expression: expression
+                     }));
+                  }
+               }
             }
 
             if( child.type === 'BinaryExpression' && child.operator == "<")
@@ -314,6 +327,27 @@ function constraints(filePath)
                         expression: expression
                      })
                   );
+               }
+               if( child.left.type == 'Identifier' && child.left.name)
+               {
+                  var expression = buf.substring(child.range[0], child.range[1]);
+                  var rightHand = buf.substring(child.right.range[0], child.right.range[1]).trim();
+                  var left = buf.substring(child.left.range[0], child.left.range[1]);
+                 
+                  if(left == 'area')
+                  {
+                     var num = "'" + rightHand.substring(1,4) + "000000'";
+                     functionConstraints[funcName].constraints.push( 
+                     new Constraint(
+                     {
+                        ident: 'phoneNumber',
+                        value: num,
+                        funcName: funcName,
+                        kind: "string",
+                        operator : child.operator,
+                        expression: expression
+                     }));
+                  }
                }
             }
 
@@ -409,8 +443,6 @@ function constraints(filePath)
                }
             }
          });
-
-         // console.log( functionConstraints[funcName]);
       }
    });
 }
